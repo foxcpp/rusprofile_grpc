@@ -1,0 +1,17 @@
+syntax = 'proto3';
+option go_package = 'github.com/foxcpp/rusprofile_grpc/proto';
+
+message QueryData {
+  string inn = 1;
+}
+
+message QueryResult {
+  string inn = 1;
+  optional string kpp = 2;
+  string title = 3;
+  string directorName = 4;
+}
+
+service Rusprofile {
+  rpc Query(QueryData) returns (QueryResult) {}
+}
