@@ -58,8 +58,16 @@ type CompanyInfo struct{
 	DirectorName string
 }
 
-func Query(ctx context.Context, inn string) (*CompanyInfo, error) {
-	queryURL := fmt.Sprintf("%s&query=%s&cacheKey=%v", ajaxEndpoint, inn, rand.Float64())
+type HTTPClient interface{
+	Do(r *http.Request) (*http.Response, error)
+}
+
+var cacheKey = func() float64 {
+	return rand.Float64()
+}
+
+func Query(ctx context.Context, client HTTPClient, inn string) (*CompanyInfo, error) {
+	queryURL := fmt.Sprintf("%s&query=%s&cacheKey=%v", ajaxEndpoint, inn, cacheKey())
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, queryURL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("parser: Query: %v", err)
@@ -76,7 +84,7 @@ func Query(ctx context.Context, inn string) (*CompanyInfo, error) {
 	req.Header.Set("Sec-Fetch-Site", "same-origin")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0")
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("parser: Query: %v", err)
 	}
@@ -147,7 +155,7 @@ func Query(ctx context.Context, inn string) (*CompanyInfo, error) {
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0")
 	time.Sleep(300*time.Millisecond)
 
-	resp, err = http.DefaultClient.Do(req)
+	resp, err = client.Do(req)
 	if err != nil {
 		return &res, fmt.Errorf("parser: Query: KPP get: %v", err)
 	}

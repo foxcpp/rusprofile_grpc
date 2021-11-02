@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/dgraph-io/ristretto"
@@ -34,6 +35,10 @@ func New() *Server {
 }
 
 func (r Server) Query(ctx context.Context, query *protodef.QueryData) (*protodef.QueryResult, error) {
+	if query.Inn == "" {
+		return nil, status.Error(codes.InvalidArgument, "INN should be non-empty")
+	}
+
 	var info *parser.CompanyInfo
 
 	val, ok := r.cache.Get(query.Inn)
@@ -41,7 +46,7 @@ func (r Server) Query(ctx context.Context, query *protodef.QueryData) (*protodef
 		info = val.(*parser.CompanyInfo)
 	} else {
 		var err error
-		info, err = parser.Query(ctx, query.Inn)
+		info, err = parser.Query(ctx, http.DefaultClient, query.Inn)
 		if err != nil {
 			r.log.Println("Query for", query.Inn, "failed:", err)
 			return nil, status.Error(codes.Internal, "internal server error")
