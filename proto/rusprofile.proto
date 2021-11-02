@@ -1,17 +1,44 @@
 syntax = 'proto3';
-option go_package = 'github.com/foxcpp/rusprofile_grpc/proto';
+package rusprofile_grpc;
+option go_package = 'github.com/foxcpp/rusprofile_grpc/protodef';
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "rusprofile.ru gRPC wrapper";
+    version: "1.0";
+  };
+};
 
 message QueryData {
   string inn = 1;
 }
 
 message QueryResult {
+  // INN number. Same as in the query.
   string inn = 1;
+  // KPP number. Omitted if company is IP.
   optional string kpp = 2;
+  // Official company name.
   string title = 3;
+  // Company CEO (director, etc) full name.
   string directorName = 4;
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    example: "{\"inn\":\"7718620740\", \"kpp\":\"771701001\", \"title\":\"ООО Хэдхантер\", \"directorName\":\"Жуков Михаил Александрович\"}"
+  };
 }
 
 service Rusprofile {
-  rpc Query(QueryData) returns (QueryResult) {}
+  // Query retrieves company information from rusprofile.ru site using its INN number.
+  rpc Query(QueryData) returns (QueryResult) {
+    option (google.api.http) = {
+      get: "/v1/query/{inn}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Query rusprofile.ru server for company information"
+    };
+  }
 }

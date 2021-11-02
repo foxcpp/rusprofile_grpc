@@ -1,0 +1,107 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "rusprofile.ru gRPC wrapper",
+    "version": "1.0"
+  },
+  "tags": [
+    {
+      "name": "Rusprofile"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/query/{inn}": {
+      "get": {
+        "summary": "Query rusprofile.ru server for company information",
+        "operationId": "Rusprofile_Query",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rusprofile_grpcQueryResult"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "inn",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Rusprofile"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "rusprofile_grpcQueryResult": {
+      "type": "object",
+      "example": {
+        "inn": "7718620740",
+        "kpp": "771701001",
+        "title": "ООО Хэдхантер",
+        "directorName": "Жуков Михаил Александрович"
+      },
+      "properties": {
+        "inn": {
+          "type": "string",
+          "description": "INN number. Same as in the query."
+        },
+        "kpp": {
+          "type": "string",
+          "description": "KPP number. Omitted if company is IP."
+        },
+        "title": {
+          "type": "string",
+          "description": "Official company name."
+        },
+        "directorName": {
+          "type": "string",
+          "description": "Company CEO (director, etc) full name."
+        }
+      }
+    }
+  }
+}
