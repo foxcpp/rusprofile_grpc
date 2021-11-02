@@ -18,9 +18,9 @@ inn:"5017096885"  kpp:"501701001"  title:"ООО \"Строй Комплект\"
 
 ```shell
 # docker build -t rusprofile_grpc .
-# docker run -d --rm rusprofile_grpc \
+# docker run -d --rm \
   -e GRPC_ENDPOINT=:8000 -e HTTP_ENDPOINT=:8001 \
-  -p 8000:8000 -p 8001:8001
+  -p 8000:8000 -p 8001:8001 rusprofile_grpc
 $ curl http://localhost:8001/v1/query/5017096885
 {"inn":"5017096885","kpp":"501701001","title":"ООО \"Строй Комплект\"","directorName":"Дудин Алексей Васильевич"}⏎
 $ xdg-open http://localhost:8001/swagger # Swagger UI
