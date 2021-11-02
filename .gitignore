@@ -1,2 +1,4 @@
 cmd/rusprofile_service/rusprofile_service
 cmd/rusprofile_query/rusprofile_query
+rusprofile_service
+rusprofile_query

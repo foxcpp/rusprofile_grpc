@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"regexp"
@@ -155,7 +155,7 @@ func Query(ctx context.Context, inn string) (*CompanyInfo, error) {
 		return nil, fmt.Errorf("parser: Query KPP: HTTP %v", resp.StatusCode)
 	}
 	defer resp.Body.Close()
-	bodyBlob, err := io.ReadAll(resp.Body)
+	bodyBlob, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return &res, fmt.Errorf("parser: Query: KPP get: %v", err)
 	}

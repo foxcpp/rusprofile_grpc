@@ -1,7 +1,7 @@
 FROM golang:1.16.5-alpine3.14 AS build-env
 
-COPY . rusprofile_grpc/
-WORKDIR rusprofile_grpc/
+COPY . /rusprofile_grpc/
+WORKDIR /rusprofile_grpc/
 RUN go build ./cmd/rusprofile_service
 
 FROM alpine:3.14
